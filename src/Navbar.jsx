@@ -1,58 +1,112 @@
-import React, { useContext } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import React, { useContext } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import { UserContext } from './UserContext';
 
-
-const  Navbar = ()=> {
-    // get context
+const Navbar = () => {
     const navigate = useNavigate();
-    let userContext = useContext(UserContext);
+    const userContext = useContext(UserContext);
 
-   
-    let onLogoutClick = (event) => {
+    const onLogoutClick = (event) => {
         event.preventDefault();
-        userContext.setUser({ isLoggedIn: false, currentUserId: null, currentUserName: null });
-        navigate("/"); // Navigate to the Login page
+        userContext.dispatch({ type: 'logout' });
+        navigate('/');
     };
-  return (
-      <nav className="navbar navbar-expand-lg style={{ marginRight: 100px }}">
-          <div>eCommerce</div>
-          <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span className="navbar-toggler-icon"></span>
-          </button>
 
-          <div className="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul className="navbar-nav mr-auto">
-                  {userContext.user.isLoggedIn ? (<li className="nav-item active ">
-                      <NavLink className="nav-link " to="/dashboard" activeclassName="active"><i class="bi bi-speedometer2"></i> Dashboard </NavLink>
-                  </li>) : ("")}
-                  {userContext.user.isLoggedIn ? (<li className="nav-item active ">
-                      <NavLink className="nav-link " to="/store" activeclassName="active"><i class="bi bi-shop"></i> Store </NavLink>
-                  </li>) : ("")}
-                  {userContext.user.isLoggedIn ? (<li>
-                      <NavLink className="nav-link" to="/" activeclassName="active">Login </NavLink>
-                  </li>):("")}
-                  {userContext.user.isLoggedIn ? (<li>
-                      <NavLink className="nav-link" to="/register" activeclassName="active">Register </NavLink>
-                  </li>):("")}
-              </ul>
-              {userContext.user.isLoggedIn ? (<div style={{ marginRight: 100 }}>
-                  <ul>
-                      <li className="nav-item dropdown">
-                          <a className="nav-link dropdown-toggle" href="/#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              <span><i className="bi bi-person-circle"></i></span> {userContext.user.currentUserName}
-                          </a>
-                          <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                              <a className="dropdown-item" href="/#" onClick={onLogoutClick}>Logout</a>
-                          </div>
-                      </li>
-                  </ul>
-              </div>):("")}
-              
-          </div>
-      </nav>
-  )
-}
+    return (
+        <nav className="navbar navbar-expand-lg navbar-light bg-light" style={{ marginRight: '100px' }}>
+            <div className="container-fluid">
+                <div className="navbar-brand">eCommerce</div>
+                <button
+                    className="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span className="navbar-toggler-icon"></span>
+                </button>
 
-export default Navbar
+                <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul className="navbar-nav me-auto">
+                    {userContext.user?.isLoggedIn && userContext.user?.currentUserRole === 'user' && (
+    <>
+        <li className="nav-item">
+            <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+                <i className="bi bi-speedometer2"></i> Dashboard
+            </NavLink>
+        </li>
+        <li className="nav-item">
+            <NavLink to="/store" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+                <i className="bi bi-shop"></i> Store
+            </NavLink>
+        </li>
+    </>
+)}
+
+                        {userContext.user.isLoggedIn && userContext.user.currentUserRole === 'admin' && (
+                            <li className="nav-item">
+                                <NavLink
+                                    className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}
+                                    to="/products"
+                                >
+                                    <i className="bi bi-box"></i> Products
+                                </NavLink>
+                            </li>
+                        )}
+                        {!userContext.user.isLoggedIn && (
+                            <>
+                                <li className="nav-item">
+                                    <NavLink
+                                        className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}
+                                        to="/login"
+                                    >
+                                        Login
+                                    </NavLink>
+                                </li>
+                                <li className="nav-item">
+                                    <NavLink
+                                        className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}
+                                        to="/register"
+                                    >
+                                        Register
+                                    </NavLink>
+                                </li>
+                            </>
+                        )}
+                    </ul>
+
+                    {userContext.user.isLoggedIn && (
+                        <div>
+                            <ul className="navbar-nav">
+                                <li className="nav-item dropdown">
+                                    <a
+                                        className="nav-link dropdown-toggle"
+                                        href="#"
+                                        id="navbarDropdown"
+                                        role="button"
+                                        data-bs-toggle="dropdown"
+                                        aria-haspopup="true"
+                                        aria-expanded="false"
+                                    >
+                                        <i className="bi bi-person-circle"></i> {userContext.user.currentUserName}
+                                    </a>
+                                    <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a className="dropdown-item" href="#" onClick={onLogoutClick}>
+                                            Logout
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </nav>
+    );
+};
+
+export default Navbar;

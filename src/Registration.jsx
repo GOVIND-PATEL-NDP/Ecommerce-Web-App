@@ -158,6 +158,7 @@ const Register = ()=> {
                         gender: state.gender,
                         country: state.country,
                         receiveNewsLetters: state.receiveNewsLetters,
+                        role : "user",
                     }),
                     headers: {
                         "Content-Type": "application/json",
@@ -166,11 +167,15 @@ const Register = ()=> {
 
                 if (response.ok) {
                     let responseBody = await response.json();
-                    userContext.setUser({
+                    userContext.dispatch({
                         ...userContext.user,
-                        isLoggedIn: true,
-                        currentUserName: responseBody.fullName,
-                        currentUserId: responseBody.id,
+                        type: "login",
+                        payload : {
+                            currentUserName: responseBody.fullName,
+                            currentUserId: responseBody.id,
+                            curretUserRole : responseBody.role,
+                        },
+                       
                     });
                     navigate('/dashboard');
                     setMessage(<span className="text-success">Successfully Registered</span>);
