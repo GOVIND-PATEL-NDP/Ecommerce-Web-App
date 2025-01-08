@@ -45,6 +45,8 @@ const Register = ()=> {
 
     const [message, setMessage] = useState("");
 
+    const env_Var =  process.env. REACT_APP_BackendUrl;
+
     let userContext = useContext(UserContext)
 
     const navigate = useNavigate();
@@ -148,7 +150,7 @@ const Register = ()=> {
             setMessage(<span className="text-success"></span>);
 
             try {
-                const response = await fetch("http://localhost:5000/users", {
+                const response = await fetch(`${env_Var}/users`, {
                     method: "POST",
                     body: JSON.stringify({
                         email: state.email,

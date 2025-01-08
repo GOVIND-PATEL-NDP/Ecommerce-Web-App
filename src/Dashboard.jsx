@@ -7,6 +7,7 @@ function Dashboard() {
   let [orders, setOrders] = useState([]);
   let [showOrderDeletedAlert, setShowOrderDeletedAlert] = useState(false);
   let [showOrderPlacedAlert, setShowOrderPlacedAlert] = useState(false);
+  const env_Var =  process.env. REACT_APP_BackendUrl;
 
   //get context
   let userContext = useContext(UserContext);
@@ -15,7 +16,7 @@ function Dashboard() {
   let loadDataFromDatabase = useCallback(async () => {
     //load data from database
     let ordersResponse = await fetch(
-      `http://localhost:5000/orders?userid=${userContext.user.currentUserId}`,
+      `${env_Var}/orders?userid=${userContext.user.currentUserId}`,
       { method: "GET" }
     );
 
@@ -63,7 +64,7 @@ function Dashboard() {
         };
 
         let orderResponse = await fetch(
-          `http://localhost:5000/orders/${orderId}`,
+          `${env_Var}/orders/${orderId}`,
           {
             method: "PUT",
             body: JSON.stringify(updateOrder),
@@ -87,7 +88,7 @@ function Dashboard() {
     async (orderId) => {
       if (window.confirm("Are you sure to delete this item from cart?")) {
         let orderResponse = await fetch(
-          `http://localhost:5000/orders/${orderId}`,
+          `${env_Var}/orders/${orderId}`,
           {
             method: "DELETE",
           }
@@ -103,6 +104,8 @@ function Dashboard() {
     },
     [loadDataFromDatabase]
   );
+ 
+  
 
   return (
     <div className="row">

@@ -7,6 +7,8 @@ const Login = (props) =>{
     const [password, setPassword] = useState("Scott123");
     let myEmailRef = useRef();
     let userContext = useContext(UserContext);
+  const env_Var =  process.env. REACT_APP_BackendUrl;
+
 
     console.log(UserContext);
     
@@ -112,7 +114,7 @@ const Login = (props) =>{
     
         if (isValid()) {
             try {
-                let response = await fetch(`http://localhost:5000/users?email=${email}&password=${password}`, {
+                let response = await fetch(`${env_Var}/users?email=${email}&password=${password}`, {
                     method: "GET"
                 });
     
