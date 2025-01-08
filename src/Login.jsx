@@ -1,9 +1,11 @@
-import React, { useContext, useEffect, useState } from "react"
+import React, { useContext, useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "./UserContext";
+
 const Login = (props) =>{
     const [email, setEmail] = useState("scott@test.com");
     const [password, setPassword] = useState("Scott123");
+    let myEmailRef = useRef();
     let userContext = useContext(UserContext);
 
     console.log(UserContext);
@@ -38,7 +40,11 @@ const Login = (props) =>{
 
     useEffect(() =>{
         console.log("Login- eCommerce");
-        
+        // myEmailRef.current.focuse();
+        const handleFocus = () => {
+            myEmailRef.current.focus(); // Correct method name
+        };
+    
     },[]);
 
     // executes only once - on component unmounting phase = componentWillUnmount
@@ -94,38 +100,54 @@ const Login = (props) =>{
     useEffect(validate, [email, password]);
 
     // when the user clicks on Login button
-    let onLoginClick= async()=>{
-
+    let onLoginClick = async () => {
         let dirtyData = dirty;
-        Object.keys(dirty).forEach((control)=>{
+        Object.keys(dirty).forEach((control) => {
             dirtyData[control] = true;
         });
         setDirty(dirtyData);
-        // call validate
+    
+        // Validate inputs
         validate();
-        if(isValid())
-        {
-            let response = await fetch(`http://localhost:5000/users?email=${email}&password=${password}`, {method : "GET"});
-           if(response.ok){
-            let responseBody = await response.json();
-            if(responseBody.length>0){
-                userContext.setUser({
-                    ...userContext.user,
-                    isLoggedIn : true,
-                    currentUserName : responseBody[0].fullName,
-                    currentUserId : responseBody[0].id,
+    
+        if (isValid()) {
+            try {
+                let response = await fetch(`http://localhost:5000/users?email=${email}&password=${password}`, {
+                    method: "GET"
                 });
-                navigate('/dashboard');
+    
+                if (response.ok) {
+                    let responseBody = await response.json();
+                    console.log(responseBody); // Verify API response
+    
+                    if (responseBody.length > 0) {
+                        userContext.dispatch({
+                            type: "login",
+                            payload: {
+                                currentUserName: responseBody[0].fullName,
+                                currentUserId: responseBody[0].id,
+                                currentUserRole: responseBody[0].role
+                            }
+                        });
+    
+                        if (responseBody[0].role === "user") {
+                            navigate('/dashboard');
+                        } else {
+                            navigate('/products');
+                        }
+                    } else {
+                        setLoginMessage(<span className="text-danger">Invalid Login, please try again</span>);
+                    }
+                } else {
+                    setLoginMessage(<span className="text-danger">Unable to connect to the server</span>);
+                }
+            } catch (error) {
+                console.error(error);
+                setLoginMessage(<span className="text-danger">An error occurred. Please try again.</span>);
             }
-            else {
-                setLoginMessage(<span className="text-danger">Invalid Login, please try again</span>);
-            }
-           } 
-        }
-        else {
-            setLoginMessage(<span className="text-danger">Unable to connect to the server</span>);
         }
     };
+    
     let isValid = () =>{
         let valid = true;
         // reading all controls from errors
@@ -134,6 +156,7 @@ const Login = (props) =>{
         }
         return valid;
     }
+
 
     return (
         <div className="row">
@@ -151,7 +174,7 @@ const Login = (props) =>{
                             setDirty({...dirty, email: true});
                             validate();
                         }}
-                        
+                        ref={myEmailRef}
                         />
                         <div className="text-danger">
                             {dirty["email"] && errors["email"][0]? errors["email"] : ""}
