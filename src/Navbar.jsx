@@ -15,7 +15,7 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-light bg-light" style={{ marginRight: '100px' }}>
+        <nav className="navbar navbar-expand-lg navbar-light bg-primary" style={{ marginRight: '100px' }}>
             <div className="container-fluid">
                 <div className="navbar-brand">eCommerce</div>
                 <button

@@ -6,13 +6,15 @@ export const OrdersService = {
       return orders.filter((ord) => ord.isPaymentCompleted === false);
   },
 };
+const env_Var =  process.env. REACT_APP_BackendUrl;
+
 
 export const ProductsService = {
   getProductByProductId: (products, productId) => {
       return products.find((prod) => prod.id == productId);
   },
   fetchProducts: () => {
-      return fetch("http://localhost:5000/products", {
+      return fetch(`${env_Var}/products`, {
           method: "GET",
       });
   },
@@ -20,7 +22,7 @@ export const ProductsService = {
 
 export const BrandsService = {
   fetchBrands: async()=> {
-      return await fetch("http://localhost:5000/brands", {
+      return await fetch(`${env_Var}/brands`, {
           method : "GET",
       })
   },
@@ -30,7 +32,7 @@ export const BrandsService = {
 };
 export const CategoriesService = {
   fetchCategories: ()=> {
-      return fetch("http://localhost:5000/categories", {
+      return fetch(`${env_Var}/categories`, {
           method : "GET",
       })
   },

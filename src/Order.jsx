@@ -23,7 +23,8 @@ function Order(props) {
                 <i className="fa fa-truck"></i> Buy Now
               </button>
               <button
-                className="btn btn-sm btn-danger mr-2"
+              style={{ margin: '5' }}
+                className="btn btn-sm btn-danger m-2"
                 onClick={() => {
                   props.onDeleteClick(props.orderId);
                 }}
